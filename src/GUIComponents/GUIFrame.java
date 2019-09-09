@@ -1,5 +1,7 @@
-package activites;
+package GUIComponents;
 
+import activites.Activity;
+import activites.SignInActivity;
 import data.DBActions;
 
 import java.awt.*;
@@ -28,21 +30,21 @@ public class GUIFrame extends JFrame
     public void startActivity(Activity input_activity)
     {
         getContentPane().removeAll();
+        getContentPane().setLayout(new GridBagLayout());
 
-        // grid back layout
-        GridBagLayout layout = new GridBagLayout();
-        getContentPane().setLayout( layout );
         GridBagConstraints lConstraints = new GridBagConstraints();
 
+        lConstraints.weightx = 0.5;
         lConstraints.gridx = 0;
         lConstraints.gridy = 0;
-        lConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        //lConstraints.gridwidth = GridBagConstraints.REMAINDER;
 
         Activity act = input_activity;
         add(act, lConstraints);
 
+        lConstraints.gridwidth = 3;
         lConstraints.gridy = 1;
-        lConstraints.weighty = 2;
+        lConstraints.anchor = GridBagConstraints.PAGE_END;
         add( panel, lConstraints);
 
         act.displayForm();

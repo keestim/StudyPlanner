@@ -1,7 +1,6 @@
-package activites;
+package GUIComponents;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class GuiMain
 {

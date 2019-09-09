@@ -1,13 +1,10 @@
 package activites;
 
-import data.DBActions;
+import GUIComponents.GUIFrame;
 import data.TimetableEntry;
 
-import javax.swing.*;
-import java.awt.Canvas;
 import java.awt.Color;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,23 +13,16 @@ import java.util.ArrayList;
 
 public class HomeActivity extends Activity
 {
-    private static JPanel panel;
-    private static DBActions db_access;
-    private static GUIFrame frame;
-
     private Object[] edit_day_buttons;
     private Button change_subjects;
+    private Button edit_timetable;
 
     private ArrayList<TimetableEntry> entries;
 
     public HomeActivity(GUIFrame input_frame)
     {
-        super(null);
-        panel = input_frame.getPanel();
-        db_access = input_frame.getDb_access();
-        frame = input_frame;
-
-        entries = db_access.getTimetableEntries(frame.getUserID());
+        super(input_frame);
+        entries = getDb_access().getTimetableEntries(getFrame().getUserID());
     }
 
     public void paint( Graphics g )
@@ -53,6 +43,7 @@ public class HomeActivity extends Activity
         for (int i = 0; i < days.length; i++)
         {
             g.fillRect((i * 180) + 20,50,150, 600);
+            g.drawString(days[i], (i * 180) + 20,40);
         }
 
         g.setColor(Color.RED);
@@ -80,10 +71,9 @@ public class HomeActivity extends Activity
     @Override
     public void displayForm()
     {
-        frame.setLayout(new GridBagLayout());
         GridBagConstraints jConstraints = new GridBagConstraints();
 
-        jConstraints.fill = GridBagConstraints.HORIZONTAL;
+        jConstraints.fill = GridBagConstraints.PAGE_END;
         jConstraints.gridy = 2;
 
         String[] days = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -91,12 +81,15 @@ public class HomeActivity extends Activity
         for (int i = 0; i < days.length; i++)
         {
             Button btn = new Button(days[i]);
-            panel.add(btn, jConstraints);
+            getPanel().add(btn, jConstraints);
             edit_day_buttons[i] = btn;
         }
 
         change_subjects = new Button("Change Subjects");
-        panel.add(change_subjects, jConstraints);
+        getPanel().add(change_subjects, jConstraints);
+
+        edit_timetable = new Button("Edit Timetable");
+        getPanel().add(edit_timetable, jConstraints);
     }
 
     public void checkInputs()
@@ -108,9 +101,28 @@ public class HomeActivity extends Activity
             ((Button) edit_day_buttons[i]).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println(index);
-                }
+                    getFrame().getPanel().removeAll();
+                    getFrame().pack();
+                    getFrame().startActivity(new EditDay(getFrame(), new Object[]{(index + 1)}));                }
             });
         }
+
+        change_subjects.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getFrame().getPanel().removeAll();
+                getFrame().pack();
+                getFrame().startActivity(new ChangeSubjects(getFrame()));
+            }
+        });
+
+        edit_timetable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getFrame().getPanel().removeAll();
+                getFrame().pack();
+                getFrame().startActivity(new EditTimetable(getFrame()));
+            }
+        });
     }
 }
