@@ -1,6 +1,10 @@
 package data;
 
+import activites.HomeActivity;
+
 import javax.rmi.CORBA.Tie;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +123,7 @@ public class DBActions
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables INNER JOIN usersubjects ON usertimetables.SubjectID = usersubjects.SubjectID WHERE usertimetables.UserID = '" + UserID + "' AND usertimetables.Day = '" + Day + "'");
+            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables INNER JOIN usersubjects ON usertimetables.SubjectID = usersubjects.SubjectID WHERE usertimetables.UserID = '" + UserID + "' AND usertimetables.Day = '" + Day + "' ORDER BY usertimetables.StartTime");
 
             while (result.next())
             {
@@ -142,7 +146,17 @@ public class DBActions
             int result = stmt.executeUpdate("INSERT INTO users (username, password) VALUES ('" + username + "', '" + password + "')");
             if (result >= 0)
             {
-                return true;
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM users WHERE username = '" + username + "'");
+                resultSet.next();
+                int userID = resultSet.getInt(1);
+
+                result = stmt.executeUpdate("INSERT INTO timetablesettings VALUES ('" + userID + "', '00:00', '24:00')");
+                if (result >= 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
         }
         catch (SQLException ex)
@@ -202,10 +216,10 @@ public class DBActions
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM 'timetablesettings' WHERE UserID = '" + UserID + "'");
+            ResultSet result = stmt.executeQuery("SELECT * FROM timetablesettings WHERE UserID = " + UserID);
             result.next();
 
-            return new TimetableSettings(result.getString(1), result.getString(2));
+            return new TimetableSettings(result.getString(2), result.getString(3));
         }
         catch (SQLException ex)
         {
@@ -220,7 +234,7 @@ public class DBActions
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM 'usersubjects' WHERE SubjectID = '" + SubjectID + "'");
+            ResultSet result = stmt.executeQuery("SELECT * FROM usersubjects WHERE SubjectID = " + SubjectID);
             result.next();
 
             return new SubjectEntry(Integer.valueOf(result.getString(1)), result.getString(2));
@@ -238,7 +252,33 @@ public class DBActions
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            int result = stmt.executeUpdate("DELETE FROM usersubjects WHERE SubjectID = '" + SubjectID + "'");
+
+            int result = stmt.executeUpdate("DELETE FROM usertimetables WHERE SubjectID = '" + SubjectID + "'");
+            if (result >= 0)
+            {
+                result = stmt.executeUpdate("DELETE FROM usersubjects WHERE SubjectID = '" + SubjectID + "'");
+
+                if (result >= 0)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean addTimetableEntry(int UserID, String SubjectName, String StartTime, String EndTime, int day)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            int subject_ID = Integer.valueOf(SubjectName.split(" | ")[0]);
+            int result = stmt.executeUpdate("INSERT INTO usertimetables VALUES ('" + UserID +"', " + subject_ID + ",'" + StartTime + "','" + EndTime + "'," + day + ")");
 
             if (result >= 0)
             {
@@ -253,5 +293,74 @@ public class DBActions
 
         return false;
     }
-    
+
+    public boolean removeTimetableEntry(String StartTime, String EndTime, int Day, int UserID)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            int result = stmt.executeUpdate("DELETE FROM usertimetables WHERE UserID = " + UserID + " AND StartTime = '" + StartTime + "' AND EndTime = '" + EndTime + "' AND Day = " + Day);
+
+            if (result >= 0)
+            {
+                return true;
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean updateUserSubject(int SubjectID, String SubjectName)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            int subject_ID = Integer.valueOf(SubjectName.split(" | ")[0]);
+            int result = stmt.executeUpdate("UPDATE SET SubjectName = '" + SubjectName + "' usersubjects WHERE SubjectID = " + SubjectID);
+
+            if (result >= 0)
+            {
+                return true;
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean entryInTimeFrame(int UserID, String start_date, String end_date, int day)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND StartTime >= '" + start_date + "' AND EndTime <= '" + end_date +"' AND Day = " + day);
+            result.next();
+            result.last();
+            if (result.getRow() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
 }

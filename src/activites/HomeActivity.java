@@ -21,8 +21,9 @@ public class HomeActivity extends Activity
 
     public HomeActivity(GUIFrame input_frame)
     {
-        super(input_frame);
+        super(input_frame, true);
         entries = getDb_access().getTimetableEntries(getFrame().getUserID());
+        getPanel().setLayout(new GridBagLayout());
     }
 
     public void paint( Graphics g )
@@ -55,9 +56,25 @@ public class HomeActivity extends Activity
             String end = entries.get(i).getEnd_time();
             float end_fraction = timeFraction(end) * 25;
 
-            System.out.println(start_fraction + "|" + end_fraction);
-
             g.fillRect((entries.get(i).getDay() - 1) * 180 + 20, Math.round(start_fraction) + 50, 150, Math.round(end_fraction - start_fraction));
+        }
+
+        g.setColor(Color.WHITE);
+        for (int i = 0; i < entries.size(); i++)
+        {
+            String start = entries.get(i).getStart_time();
+            float start_fraction = timeFraction(start) * 25;
+
+            String end = entries.get(i).getEnd_time();
+            float end_fraction = timeFraction(end) * 25;
+
+            g.drawString(entries.get(i).getSubject_name(), (entries.get(i).getDay() - 1) * 180 + 20, Math.round(start_fraction) + 60);
+
+            g.drawString("Start Time: " +
+                    entries.get(i).getStart_time(), (entries.get(i).getDay() - 1) * 180 + 20, Math.round(start_fraction) + 75);
+
+            g.drawString("End Time: " +
+                    entries.get(i).getEnd_time(), (entries.get(i).getDay() - 1) * 180 + 20, Math.round(start_fraction) + 90);
         }
     }
 
@@ -103,7 +120,7 @@ public class HomeActivity extends Activity
                 public void actionPerformed(ActionEvent e) {
                     getFrame().getPanel().removeAll();
                     getFrame().pack();
-                    getFrame().startActivity(new EditDay(getFrame(), new Object[]{(index + 1)}));                }
+                    getFrame().startActivity(new EditDay(getFrame(), new Object[]{(index + 1)}, false));                }
             });
         }
 

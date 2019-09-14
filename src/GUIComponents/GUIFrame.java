@@ -13,6 +13,7 @@ public class GUIFrame extends JFrame
     private JPanel panel;
     private static DBActions db_access;
     private int userID;
+    GridBagConstraints lConstraints;
 
     public GUIFrame(String frameTitle, DBActions input_db_access)
     {
@@ -24,32 +25,48 @@ public class GUIFrame extends JFrame
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
         panel = new JPanel();
+        lConstraints = new GridBagConstraints();
         startActivity(new SignInActivity(this));
     }
 
     public void startActivity(Activity input_activity)
     {
+        setPreferredSize( new Dimension( 1280, 720 ) );
         getContentPane().removeAll();
+        getContentPane().update(getGraphics());
         getContentPane().setLayout(new GridBagLayout());
 
-        GridBagConstraints lConstraints = new GridBagConstraints();
-
-        lConstraints.weightx = 0.5;
+        lConstraints.weighty = 1;
         lConstraints.gridx = 0;
         lConstraints.gridy = 0;
         //lConstraints.gridwidth = GridBagConstraints.REMAINDER;
 
-        Activity act = input_activity;
-        add(act, lConstraints);
+        if (input_activity.isDraw_gui())
+        {
+            add(input_activity, lConstraints);
+            input_activity.paint(getGraphics());
+            getContentPane().paintComponents(getGraphics());
+        }
+        else
+        {
+            setSize(1280,780);
+            //setPreferredSize( new Dimension( 1280, 720 ) );
+            this.pack();
+            this.setVisible(true);
 
-        lConstraints.gridwidth = 3;
+
+        }
+
+        lConstraints.gridheight = 1;
         lConstraints.gridy = 1;
+        lConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        lConstraints.weighty = 0;
         lConstraints.anchor = GridBagConstraints.PAGE_END;
         add( panel, lConstraints);
 
-        act.displayForm();
-        act.checkInputs();
 
+        input_activity.displayForm();
+        input_activity.checkInputs();
 
         // pack layout
         this.setVisible(true);
@@ -89,6 +106,11 @@ public class GUIFrame extends JFrame
 
         this.pack();
         this.setVisible(true);
+    }
+
+    public GridBagConstraints defaultConstraints()
+    {
+        return lConstraints;
     }
 
     public void showText(String input_string)

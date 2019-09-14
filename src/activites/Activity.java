@@ -12,6 +12,7 @@ public class Activity extends Canvas
     private static DBActions db_access;
     private static GUIFrame frame;
     private static Object[] args;
+    private static boolean draw_gui;
 
 
     //have default constructor pass in an array of arguments!
@@ -22,6 +23,21 @@ public class Activity extends Canvas
         db_access = input_frame.getDb_access();
         frame = input_frame;
         setPreferredSize( new Dimension( 1280, 720 ) );
+        this.draw_gui = true;
+    }
+
+    public Activity(GUIFrame input_frame, boolean draw_gui)
+    {
+        super();
+        panel = input_frame.getPanel();
+        db_access = input_frame.getDb_access();
+        frame = input_frame;
+        setPreferredSize( new Dimension( 1280, 720 ) );
+        this.draw_gui = draw_gui;
+    }
+
+    public boolean isDraw_gui() {
+        return draw_gui;
     }
 
     public Activity(GUIFrame input_frame, Object[] args)
@@ -32,6 +48,18 @@ public class Activity extends Canvas
         frame = input_frame;
         this.args = args;
         setPreferredSize( new Dimension( 1280, 720 ) );
+        this.draw_gui = true;
+    }
+
+    public Activity(GUIFrame input_frame, Object[] args, boolean draw_gui)
+    {
+        super();
+        panel = input_frame.getPanel();
+        db_access = input_frame.getDb_access();
+        frame = input_frame;
+        this.args = args;
+        setPreferredSize( new Dimension( 1280, 720 ) );
+        this.draw_gui = draw_gui;
     }
 
     public void paint( Graphics g )

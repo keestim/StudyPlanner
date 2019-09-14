@@ -15,7 +15,9 @@ public class SignInActivity extends Activity
 
     public SignInActivity(GUIFrame input_frame)
     {
-        super(input_frame);
+        super(input_frame, false);
+
+        getPanel().setLayout(new GridLayout(3, 4, 5, 10));
     }
 
     @Override
@@ -49,9 +51,13 @@ public class SignInActivity extends Activity
             @Override
             public void actionPerformed(ActionEvent e)
             {
+
+
                 getFrame().getPanel().removeAll();
                 getFrame().pack();
+
                 getFrame().startActivity(new SignUpActivity(getFrame()));
+
 
             }
         });
@@ -63,17 +69,15 @@ public class SignInActivity extends Activity
     }
 
     // repaint the canvas
-    public void update( Graphics g )
-    {
-
-    }
+    public void update( Graphics g ) {}
 
     @Override
     public void displayForm()
     {
         GridBagConstraints jConstraints = new GridBagConstraints();
 
-        jConstraints.fill = GridBagConstraints.HORIZONTAL;
+        jConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        jConstraints.anchor = GridBagConstraints.WEST;
 
         String[] input_fields = new String[]{"Username", "Password"};
         text_input = new Object[input_fields.length];

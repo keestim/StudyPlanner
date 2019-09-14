@@ -5,6 +5,8 @@ import data.TimetableSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class EditTimetable extends Activity
 {
@@ -26,9 +28,11 @@ public class EditTimetable extends Activity
     {
         getFrame().setLayout(new GridBagLayout());
         GridBagConstraints jConstraints = new GridBagConstraints();
+        jConstraints.gridwidth = 2;
 
         String[] input_fields = new String[]{"Start Time", "End Time"};
         text_input = new Object[input_fields.length];
+        jConstraints.gridy = 1;
 
         for (int i = 0; i < input_fields.length; i++)
         {
@@ -40,13 +44,15 @@ public class EditTimetable extends Activity
             }
             else
             {
+
                 text.setText(timetableSettings.getEnd_time());
             }
 
             text_input[i] = text;
-            getPanel().setSize(300, 300);;
+            getPanel().setSize(300, 300);
             getPanel().add(label, jConstraints);
             getPanel().add(text, jConstraints);
+            jConstraints.gridy++;
         }
 
         Submit = new Button("Submit");
@@ -59,7 +65,14 @@ public class EditTimetable extends Activity
     @Override
     public void checkInputs()
     {
+        Return.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getFrame().getPanel().removeAll();
+                getFrame().pack();
+                getFrame().startActivity(new HomeActivity(getFrame()));
+            }
+        });
 
     }
-
 }

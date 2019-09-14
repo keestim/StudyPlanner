@@ -23,12 +23,15 @@ public class AddSubject extends Activity
     {
         getFrame().setLayout(new GridBagLayout());
         GridBagConstraints jConstraints = new GridBagConstraints();
+        jConstraints.gridwidth = 2;
+        jConstraints.gridy = 1;
 
         String[] input_fields = new String[]{"Name"};
         text_input = new Object[input_fields.length];
 
         for (int i = 0; i < input_fields.length; i++)
         {
+            jConstraints.gridy++;
             JLabel label = new JLabel(input_fields[i] + ": ");
             TextField text = new TextField(15);
             text_input[i] = text;
@@ -37,6 +40,8 @@ public class AddSubject extends Activity
             getPanel().add(label, jConstraints);
             getPanel().add(text, jConstraints);
         }
+
+        jConstraints.gridy++;
 
         Submit = new Button("Submit");
         getPanel().add(Submit, jConstraints);
