@@ -321,7 +321,7 @@ public class DBActions
         {
             Statement stmt = fDBConnection.createStatement();
             int subject_ID = Integer.valueOf(SubjectName.split(" | ")[0]);
-            int result = stmt.executeUpdate("UPDATE SET SubjectName = '" + SubjectName + "' usersubjects WHERE SubjectID = " + SubjectID);
+            int result = stmt.executeUpdate("UPDATE usersubjects SET SubjectName = '" + SubjectName + "'  WHERE SubjectID = " + SubjectID);
 
             if (result >= 0)
             {
@@ -352,6 +352,27 @@ public class DBActions
             else
             {
                 return false;
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean updateUsertimeTable(int UserID, String starttime, String endtime)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            int result = stmt.executeUpdate("UPDATE timetablesettings SET StartTime = '" + starttime + "' AND EndTime = '" + endtime + "' WHERE UserID = " + UserID);
+
+            if (result >= 0)
+            {
+                return true;
             }
 
         }

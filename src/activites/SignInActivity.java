@@ -12,12 +12,14 @@ public class SignInActivity extends Activity
     private Button Submit;
     private Button SignUp;
     private Object[] text_input;
+    private JTextPane error_output;
 
     public SignInActivity(GUIFrame input_frame)
     {
         super(input_frame, false);
 
-        getPanel().setLayout(new GridLayout(3, 4, 5, 10));
+        getPanel().setLayout(new GridLayout(4, 4, 5, 10));
+        error_output = new JTextPane();
     }
 
     @Override
@@ -28,21 +30,37 @@ public class SignInActivity extends Activity
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String error_string = "";
+
                 String user_name = ((TextField) text_input[0]).getText();
                 String password = ((TextField) text_input[1]).getText();
-                if (getDb_access().AuthenticateUser(user_name, password))
+
+                if (user_name.length() == 0)
                 {
-                    getFrame().setUserID(getDb_access().GetUserIDByUsername(user_name));
-                    getFrame().getPanel().removeAll();
-                    getFrame().pack();
-                    getFrame().startActivity(new HomeActivity(getFrame()));
+                    error_string += "Username must be entered" + '\n';
                 }
-                else
+
+                if (password.length() == 0)
                 {
-                    System.out.println("USER AIN'T EXISTING" + user_name);
-                    //display error message!!!!
-                    //implement method in gui main to draw error messages
+                    error_string += "Password must be entered" + '\n';
                 }
+
+                if (error_string.length() == 0)
+                {
+                    if (getDb_access().AuthenticateUser(user_name, password))
+                    {
+                        getFrame().setUserID(getDb_access().GetUserIDByUsername(user_name));
+                        getFrame().getPanel().removeAll();
+                        getFrame().pack();
+                        getFrame().startActivity(new HomeActivity(getFrame()));
+                    }
+                    else
+                    {
+                        error_string += "User with entered Username and Password doesn't exist" + '\n';
+                    }
+                }
+
+                error_output.setText(error_string);
             }
         });
 
@@ -51,14 +69,10 @@ public class SignInActivity extends Activity
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
-
                 getFrame().getPanel().removeAll();
                 getFrame().pack();
 
                 getFrame().startActivity(new SignUpActivity(getFrame()));
-
-
             }
         });
     }
@@ -102,6 +116,10 @@ public class SignInActivity extends Activity
 
         SignUp = new Button("Sign Up");
         getPanel().add(SignUp, jConstraints);
+
+        jConstraints.gridy++;
+        getPanel().add(error_output, jConstraints);
+
         getFrame().pack();
         getFrame().setVisible(true);
     }

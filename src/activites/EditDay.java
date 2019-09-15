@@ -23,6 +23,8 @@ public class EditDay extends Activity
     private Button[] edit_buttons;
     private Button[] remove_buttons;
 
+    private JTextPane error_output;
+
     private int day;
 
     private ArrayList<TimetableEntry> entries;
@@ -36,6 +38,8 @@ public class EditDay extends Activity
         remove_buttons = new Button[entries.size()];
 
         day = (int) args[0];
+
+        error_output = new JTextPane();
         //getPanel().setLayout(new GridLayout(2, 4, 5, 10));
     }
 
@@ -81,6 +85,8 @@ public class EditDay extends Activity
         Return = new Button("Return");
         getPanel().add(Return, jConstraints);
 
+        jConstraints.gridy++;
+        getPanel().add(error_output, jConstraints);
 
         GridBagConstraints kConstraints = new GridBagConstraints();
         kConstraints.fill = GridBagConstraints.EAST;
@@ -123,19 +129,37 @@ public class EditDay extends Activity
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if (!(getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)))
-                {
-                    getDb_access().addTimetableEntry(getFrame().getUserID(), (String) subjectList.getSelectedItem(), start_time.getText(), end_time.getText(), day);
-                    //getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
-                    getFrame().getPanel().removeAll();
-                    getFrame().pack();
+                String error_string = "";
 
-                    getFrame().startActivity(new HomeActivity(getFrame()));
-                }
-                else
+                if (((TextField) start_time).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
-                    System.out.println("ERROR!");
+                    error_string += "Make sure start time follows: hh:mm";
                 }
+
+                if (((TextField) end_time).getText().matches("\\d{1,}\\:\\d{2}"))
+                {
+                    error_string += "Make sure end time follows: hh:mm";
+                }
+
+                if (error_string.length() == 0)
+                {
+                    if (!(getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)))
+                    {
+                        getDb_access().addTimetableEntry(getFrame().getUserID(), (String) subjectList.getSelectedItem(), start_time.getText(), end_time.getText(), day);
+                        //getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
+                        getFrame().getPanel().removeAll();
+                        getFrame().pack();
+
+                        getFrame().startActivity(new HomeActivity(getFrame()));
+                    }
+                    else
+                    {
+                        error_string += "Specified time overlaps with a current activity!"
+                    }
+                }
+
+                error_output.setText(error_string);
+
             }
         });
 

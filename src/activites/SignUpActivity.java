@@ -12,10 +12,13 @@ public class SignUpActivity extends Activity {
     private Button Return;
     private Object[] text_input;
 
+    private JTextPane error_output;
+
     public SignUpActivity(GUIFrame input_frame)
     {
         super(input_frame, false);
-        getPanel().setLayout(new GridLayout(4, 2, 5, 10));
+        getPanel().setLayout(new GridLayout(5, 2, 5, 10));
+        error_output = new JTextPane();
     }
 
     @Override
@@ -26,10 +29,34 @@ public class SignUpActivity extends Activity {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                getDb_access().createUser(((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
-                getFrame().getPanel().removeAll();
-                getFrame().pack();
-                getFrame().startActivity(new SignInActivity(getFrame()));
+                String error_string = "";
+
+                if (((TextField) text_input[1]).getText().length() == 0)
+                {
+                    error_string += "Password must have a length greater than 0" +'\n';
+                }
+
+                if (((TextField) text_input[0]).getText().length() == 0)
+                {
+                    error_string += "Username must have a length greater than 0" +'\n';
+                }
+
+                if (!((TextField) text_input[1]).getText().contentEquals((((TextField) text_input[2]).getText())))
+                {
+                    error_string += "Password must match" +'\n';
+                }
+
+                if (error_string.length() == 0)
+                {
+                    getDb_access().createUser(((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
+                    getFrame().getPanel().removeAll();
+                    getFrame().pack();
+                    getFrame().startActivity(new SignInActivity(getFrame()));
+                }
+                else
+                {
+                    error_output.setText(error_string);
+                }
             }
         });
 
@@ -48,7 +75,8 @@ public class SignUpActivity extends Activity {
     @Override
     public void displayForm()
     {
-        GridBagConstraints jConstraints = new GridBagConstraints();
+        GridBagConstraints jConstraints;
+        jConstraints = new GridBagConstraints();
         jConstraints.gridwidth = GridBagConstraints.REMAINDER;
         jConstraints.anchor = GridBagConstraints.WEST;
 
@@ -76,5 +104,8 @@ public class SignUpActivity extends Activity {
 
         Return = new Button("Return");
         getPanel().add(Return, jConstraints);
+
+        jConstraints.gridy++;
+        getPanel().add(error_output, jConstraints);
     }
 }

@@ -15,12 +15,14 @@ public class EditTimetable extends Activity
     private Button Submit;
     private Button Return;
     private Object[] text_input;
+    private JTextPane error_output;
 
     public EditTimetable(GUIFrame input_frame)
     {
         super(input_frame);
         //if timetable settings don't exist for the user, then create entry!
         timetableSettings = getDb_access().getTimetableSettings(getFrame().getUserID());
+        error_output = new JTextPane();
     }
 
     @Override
@@ -60,6 +62,9 @@ public class EditTimetable extends Activity
 
         Return = new Button("Return");
         getPanel().add(Return, jConstraints);
+
+        jConstraints.gridy++;
+        getPanel().add(error_output, jConstraints);
     }
 
     @Override
@@ -71,6 +76,36 @@ public class EditTimetable extends Activity
                 getFrame().getPanel().removeAll();
                 getFrame().pack();
                 getFrame().startActivity(new HomeActivity(getFrame()));
+            }
+        });
+
+        Submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String error_string = "";
+
+                if (((TextField) text_input[0]).getText().matches("\\d{1,}\\:\\d{2}"))
+                {
+                    error_string += "Make sure start time follows: hh:mm";
+                }
+
+                if (((TextField) text_input[1]).getText().matches("\\d{1,}\\:\\d{2}"))
+                {
+                    error_string += "Make sure end time follows: hh:mm";
+                }
+
+                if (error_string.length() == 0)
+                {
+                    getDb_access().updateUsertimeTable(getFrame().getUserID(), ((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
+                    getFrame().getPanel().removeAll();
+                    getFrame().pack();
+                    getFrame().startActivity(new HomeActivity(getFrame()));
+                }
+                else
+                {
+                    error_output.setText(error_string);
+                }
             }
         });
 
