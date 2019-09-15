@@ -31,7 +31,6 @@ public class GUIFrame extends JFrame
 
     public void startActivity(Activity input_activity)
     {
-        setPreferredSize( new Dimension( 1280, 720 ) );
         getContentPane().removeAll();
         getContentPane().update(getGraphics());
         getContentPane().setLayout(new GridBagLayout());
@@ -49,6 +48,7 @@ public class GUIFrame extends JFrame
         }
         else
         {
+            setPreferredSize( new Dimension( 1280, 720 ) );
             setSize(1280,780);
             //setPreferredSize( new Dimension( 1280, 720 ) );
             this.pack();

@@ -337,7 +337,7 @@ public class DBActions
         return false;
     }
 
-    public boolean entryInTimeFrame(int UserID, String start_date, String end_date, int day)
+    public int entryInTimeFrame(int UserID, String start_date, String end_date, int day)
     {
         try
         {
@@ -345,14 +345,7 @@ public class DBActions
             ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND StartTime >= '" + start_date + "' AND EndTime <= '" + end_date +"' AND Day = " + day);
             result.next();
             result.last();
-            if (result.getRow() > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return result.getRow();
 
         }
         catch (SQLException ex)
@@ -360,7 +353,7 @@ public class DBActions
             ex.printStackTrace();
         }
 
-        return false;
+        return -1;
     }
 
     public boolean updateUsertimeTable(int UserID, String starttime, String endtime)
@@ -384,4 +377,45 @@ public class DBActions
         return false;
     }
 
+
+    public TimetableEntry getTimetableEntry(int UserID, String start_time, String end_time, int day)
+    {
+        try {
+            Statement stmt = fDBConnection.createStatement();
+            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables INNER JOIN usersubjects ON usertimetables.SubjectID = usersubjects.SubjectID WHERE usertimetables.UserID = " +
+                    UserID + " AND usertimetables.StartTime >= '" + start_time + "' AND usertimetables.EndTime <= '" + end_time + "' AND usertimetables.Day = " + day);
+            result.next();
+            return new TimetableEntry(result.getString(7), result.getString(3), result.getString(4), result.getInt(5));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public boolean updateTimetableEntry(int UserID, String SubjectName, String previousStartTime, String previousEndTime, String StartTime, String EndTime, int day)
+    {
+        try
+        {
+            Statement stmt = fDBConnection.createStatement();
+            int subject_ID = Integer.valueOf(SubjectName.split(" | ")[0]);
+
+            int result = stmt.executeUpdate("UPDATE usertimetables SET SubjectID = " + subject_ID + ", StartTime = '" + StartTime + "', EndTime = '" + EndTime + "', Day = " + day + " WHERE UserID = " + UserID + " AND Day = " + day +
+                    " AND StartTime = '" + previousStartTime + "' AND EndTime = '" + previousEndTime + "'");
+
+            if (result >= 0)
+            {
+                return true;
+            }
+
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
 }

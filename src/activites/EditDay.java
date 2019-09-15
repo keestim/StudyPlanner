@@ -27,6 +27,8 @@ public class EditDay extends Activity
 
     private int day;
 
+    private String[] days_of_week = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
     private ArrayList<TimetableEntry> entries;
 
     public EditDay(GUIFrame input_frame, Object[] args, boolean draw_gui)
@@ -56,29 +58,36 @@ public class EditDay extends Activity
             subjects[i] = subjectEntries.get(i).getSubjectID() + " | " + subjectEntries.get(i).getSubjectName();
         }
 
-        JLabel label = new JLabel("Add event:");
-        getPanel().add(label, jConstraints);
-
         jConstraints.gridwidth = 2;
         jConstraints.gridy = 1;
+
+        JLabel label = new JLabel(days_of_week[day - 1]);
+        getPanel().add(label, jConstraints);
+
+        jConstraints.gridy++;
+
+        label = new JLabel("Add event:");
+        getPanel().add(label, jConstraints);
+
+        jConstraints.gridy++;
 
         subjectList = new JComboBox(subjects);
         getPanel().add(subjectList, jConstraints);
 
-        jConstraints.gridy = 2;
+        jConstraints.gridy++;
         label = new JLabel("Start Time: ");
         start_time = new TextField(15);
         getPanel().add(label, jConstraints);
         getPanel().add(start_time, jConstraints);
 
-        jConstraints.gridy = 3;
+        jConstraints.gridy++;
         label = new JLabel("End Time: ");
         end_time = new TextField(15);
         getPanel().add(label, jConstraints);
         getPanel().add(end_time, jConstraints);
 
         jConstraints.gridwidth = 1;
-        jConstraints.gridy = 4;
+        jConstraints.gridy++;
         Submit = new Button("Submit");
         getPanel().add(Submit, jConstraints);
 
@@ -131,19 +140,19 @@ public class EditDay extends Activity
             {
                 String error_string = "";
 
-                if (((TextField) start_time).getText().matches("\\d{1,}\\:\\d{2}"))
+                if (!((TextField) start_time).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
-                    error_string += "Make sure start time follows: hh:mm";
+                    error_string += "Make sure start time follows: hh:mm" + '\n';
                 }
 
-                if (((TextField) end_time).getText().matches("\\d{1,}\\:\\d{2}"))
+                if (!((TextField) end_time).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
-                    error_string += "Make sure end time follows: hh:mm";
+                    error_string += "Make sure end time follows: hh:mm" + '\n';
                 }
 
                 if (error_string.length() == 0)
                 {
-                    if (!(getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)))
+                    if ((getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)) == 0)
                     {
                         getDb_access().addTimetableEntry(getFrame().getUserID(), (String) subjectList.getSelectedItem(), start_time.getText(), end_time.getText(), day);
                         //getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
@@ -154,7 +163,7 @@ public class EditDay extends Activity
                     }
                     else
                     {
-                        error_string += "Specified time overlaps with a current activity!"
+                        error_string += "Specified time overlaps with a current activity!" + '\n';
                     }
                 }
 
@@ -179,7 +188,9 @@ public class EditDay extends Activity
             edit_buttons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-
+                    getFrame().getPanel().removeAll();
+                    getFrame().pack();
+                    getFrame().startActivity(new EditTimetableEntry(getFrame(), new Object[]{entries.get(index).getStart_time(), entries.get(index).getEnd_time(), entries.get(index).getDay()}, false));
                 }
             });
 

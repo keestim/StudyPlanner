@@ -22,7 +22,7 @@ public class Activity extends Canvas
         panel = input_frame.getPanel();
         db_access = input_frame.getDb_access();
         frame = input_frame;
-        setPreferredSize( new Dimension( 1280, 720 ) );
+        //setPreferredSize( new Dimension( 1280, 720 ) );
         this.draw_gui = true;
     }
 
@@ -32,7 +32,7 @@ public class Activity extends Canvas
         panel = input_frame.getPanel();
         db_access = input_frame.getDb_access();
         frame = input_frame;
-        setPreferredSize( new Dimension( 1280, 720 ) );
+        //setPreferredSize( new Dimension( 1280, 720 ) );
         this.draw_gui = draw_gui;
     }
 
@@ -47,7 +47,7 @@ public class Activity extends Canvas
         db_access = input_frame.getDb_access();
         frame = input_frame;
         this.args = args;
-        setPreferredSize( new Dimension( 1280, 720 ) );
+        //setPreferredSize( new Dimension( 1280, 720 ) );
         this.draw_gui = true;
     }
 
@@ -58,7 +58,7 @@ public class Activity extends Canvas
         db_access = input_frame.getDb_access();
         frame = input_frame;
         this.args = args;
-        setPreferredSize( new Dimension( 1280, 720 ) );
+        //setPreferredSize( new Dimension( 1280, 720 ) );
         this.draw_gui = draw_gui;
     }
 

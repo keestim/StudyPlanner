@@ -13,9 +13,12 @@ public class AddSubject extends Activity
     private Button Return;
     private Object[] text_input;
 
+    private JTextPane error_output;
+
     public AddSubject(GUIFrame input_frame)
     {
         super(input_frame);
+        error_output = new JTextPane();
     }
 
     @Override
@@ -48,6 +51,10 @@ public class AddSubject extends Activity
 
         Return = new Button("Return");
         getPanel().add(Return, jConstraints);
+
+        jConstraints.gridy++;
+        jConstraints.gridx++;
+        getPanel().add(error_output, jConstraints);
     }
 
     @Override
@@ -56,10 +63,24 @@ public class AddSubject extends Activity
         Submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
-                getFrame().getPanel().removeAll();
-                getFrame().pack();
-                getFrame().startActivity(new ChangeSubjects(getFrame()));
+                String error_string = "";
+
+                if (((TextField) text_input[0]).getText().length() == 0)
+                {
+                    error_string = "Ensure subject name is entered";
+                }
+
+                if (error_string.length() == 0)
+                {
+                    getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
+                    getFrame().getPanel().removeAll();
+                    getFrame().pack();
+                    getFrame().startActivity(new ChangeSubjects(getFrame()));
+                }
+                else
+                {
+                    error_output.setText(error_string);
+                }
             }
         });
 

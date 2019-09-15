@@ -85,12 +85,12 @@ public class EditTimetable extends Activity
             {
                 String error_string = "";
 
-                if (((TextField) text_input[0]).getText().matches("\\d{1,}\\:\\d{2}"))
+                if (!((TextField) text_input[0]).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
                     error_string += "Make sure start time follows: hh:mm";
                 }
 
-                if (((TextField) text_input[1]).getText().matches("\\d{1,}\\:\\d{2}"))
+                if (!((TextField) text_input[1]).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
                     error_string += "Make sure end time follows: hh:mm";
                 }
