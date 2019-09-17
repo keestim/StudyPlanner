@@ -40,28 +40,6 @@ public class Activity extends Canvas
         return draw_gui;
     }
 
-    public Activity(GUIFrame input_frame, Object[] args)
-    {
-        super();
-        panel = input_frame.getPanel();
-        db_access = input_frame.getDb_access();
-        frame = input_frame;
-        this.args = args;
-        //setPreferredSize( new Dimension( 1280, 720 ) );
-        this.draw_gui = true;
-    }
-
-    public Activity(GUIFrame input_frame, Object[] args, boolean draw_gui)
-    {
-        super();
-        panel = input_frame.getPanel();
-        db_access = input_frame.getDb_access();
-        frame = input_frame;
-        this.args = args;
-        //setPreferredSize( new Dimension( 1280, 720 ) );
-        this.draw_gui = draw_gui;
-    }
-
     public void paint( Graphics g )
     {
         update( g ); // repaint canvas
@@ -73,21 +51,25 @@ public class Activity extends Canvas
 
     }
 
+    //displays the user form section for the activity
     public void displayForm()
     {
 
     }
 
+    //displays the user form section for the activity with input constraints
     public void displayForm(GridBagConstraints constraint)
     {
 
     }
 
+    //method is implemented with listeners for buttons, etc
     public void checkInputs()
     {
 
     }
 
+    //getters for various fields
     public static Object[] getArgs() {
         return args;
     }

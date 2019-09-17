@@ -27,9 +27,11 @@ public class EditTimetableEntry extends Activity
 
     private int day;
 
+    //Display page for users to edit a specific timetable entry
     public EditTimetableEntry(GUIFrame input_frame, Object[] args, boolean draw_gui)
     {
-        super(input_frame, args, draw_gui);
+        super(input_frame, draw_gui);
+        //gets timetable entry from database
         entry = getDb_access().getTimetableEntry(getFrame().getUserID(), (String) args[0], (String) args[1], (Integer) args[2]);
 
         error_output = new JTextPane();
@@ -43,9 +45,11 @@ public class EditTimetableEntry extends Activity
         day = entry.getDay();
 
         int selected_item = 0;
+        //gets all users subjects
         ArrayList<SubjectEntry> subjectEntries = getDb_access().getUserSubjects(getFrame().getUserID());
         String[] subjects = new String[subjectEntries.size()];
 
+        //loops through all the users subject gather from database, a sets as option for JComboBox element
         for (int i = 0; i < subjects.length; i++)
         {
             subjects[i] = subjectEntries.get(i).getSubjectID() + " | " + subjectEntries.get(i).getSubjectName();
@@ -58,6 +62,7 @@ public class EditTimetableEntry extends Activity
         subjectList.setSelectedIndex(selected_item);
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -101,6 +106,7 @@ public class EditTimetableEntry extends Activity
         getPanel().add(error_output, jConstraints);
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs() {
         Submit.addActionListener(new ActionListener() {
@@ -108,6 +114,7 @@ public class EditTimetableEntry extends Activity
             public void actionPerformed(ActionEvent e) {
                 String error_string = "";
 
+                //uses regex to ensure input is in correct format
                 if (!((TextField) start_time).getText().matches("\\d{1,}\\:\\d{2}")) {
                     error_string += "Make sure start time follows: hh:mm" + '\n';
                 }
@@ -117,7 +124,8 @@ public class EditTimetableEntry extends Activity
                 }
 
                 if (error_string.length() == 0) {
-                    if ((getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)) <= 1) {
+                    //checks there is no overlap with existing activites, and if there is no overlap, activity is updated
+                    if ((getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)) <= 0) {
                         getDb_access().updateTimetableEntry(getFrame().getUserID(), (String) subjectList.getSelectedItem(), entry.getStart_time(), entry.getEnd_time(), start_time.getText(), end_time.getText(), day);
                         getFrame().getPanel().removeAll();
                         getFrame().pack();
@@ -133,6 +141,7 @@ public class EditTimetableEntry extends Activity
             }
         });
 
+        //returns the user to the home activity
         Return.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,6 +151,7 @@ public class EditTimetableEntry extends Activity
             }
         });
 
+        //removes the selected timetable entry
         Remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

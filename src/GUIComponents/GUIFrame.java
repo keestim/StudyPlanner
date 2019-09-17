@@ -12,7 +12,11 @@ public class GUIFrame extends JFrame
     private static final long serialVersionUID = 1L;
     private JPanel panel;
     private static DBActions db_access;
+
+    //stores ID of currently logged in user
     private int userID;
+
+    //stores constraints for the main panel
     GridBagConstraints lConstraints;
 
     public GUIFrame(String frameTitle, DBActions input_db_access)
@@ -26,6 +30,7 @@ public class GUIFrame extends JFrame
 
         panel = new JPanel();
         lConstraints = new GridBagConstraints();
+        //program is started with SignInAcitivity
         startActivity(new SignInActivity(this));
     }
 
@@ -35,11 +40,12 @@ public class GUIFrame extends JFrame
         getContentPane().update(getGraphics());
         getContentPane().setLayout(new GridBagLayout());
 
+        //updates constraints for graphics panel
         lConstraints.weighty = 1;
         lConstraints.gridx = 0;
         lConstraints.gridy = 0;
-        //lConstraints.gridwidth = GridBagConstraints.REMAINDER;
 
+        //if activity specifies Graphics conponent to be drawn then Graphics is added
         if (input_activity.isDraw_gui())
         {
             add(input_activity, lConstraints);
@@ -53,10 +59,9 @@ public class GUIFrame extends JFrame
             //setPreferredSize( new Dimension( 1280, 720 ) );
             this.pack();
             this.setVisible(true);
-
-
         }
 
+        //updates constraints for form
         lConstraints.gridheight = 1;
         lConstraints.gridy = 1;
         lConstraints.gridwidth = GridBagConstraints.REMAINDER;
@@ -64,8 +69,9 @@ public class GUIFrame extends JFrame
         lConstraints.anchor = GridBagConstraints.PAGE_END;
         add( panel, lConstraints);
 
-
+        //call activity methods to display form content and
         input_activity.displayForm();
+        //runs method to asyncronously check form inputs
         input_activity.checkInputs();
 
         // pack layout
@@ -87,38 +93,5 @@ public class GUIFrame extends JFrame
 
     public void setUserID(int userID) {
         this.userID = userID;
-    }
-
-    public void setPanel(JPanel panel)
-    {
-        this.panel = panel;
-    }
-
-    public void clearScreen()
-    {
-        panel.removeAll();
-        this.pack();
-    }
-
-    public void setNewScreen(Activity input_screen)
-    {
-        System.out.println("new screen");
-
-        this.pack();
-        this.setVisible(true);
-    }
-
-    public GridBagConstraints defaultConstraints()
-    {
-        return lConstraints;
-    }
-
-    public void showText(String input_string)
-    {
-        TextArea text = new TextArea("Aas");
-        panel.add(text);
-        this.add(panel);
-
-        this.pack();
     }
 }

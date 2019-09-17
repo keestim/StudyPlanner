@@ -17,14 +17,16 @@ public class EditTimetable extends Activity
     private Object[] text_input;
     private JTextPane error_output;
 
+    //Displays the screen which allows users to edit their global timetable settings
     public EditTimetable(GUIFrame input_frame)
     {
         super(input_frame);
-        //if timetable settings don't exist for the user, then create entry!
+        //gets user's timetable settings as object from database
         timetableSettings = getDb_access().getTimetableSettings(getFrame().getUserID());
         error_output = new JTextPane();
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -36,6 +38,7 @@ public class EditTimetable extends Activity
         text_input = new Object[input_fields.length];
         jConstraints.gridy = 1;
 
+        //loops through all the field names in array and displays them on screen
         for (int i = 0; i < input_fields.length; i++)
         {
             JLabel label = new JLabel(input_fields[i] + ": ");
@@ -67,6 +70,7 @@ public class EditTimetable extends Activity
         getPanel().add(error_output, jConstraints);
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs()
     {
@@ -85,6 +89,7 @@ public class EditTimetable extends Activity
             {
                 String error_string = "";
 
+                //regex makes sure that input is in correct format
                 if (!((TextField) text_input[0]).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
                     error_string += "Make sure start time follows: hh:mm";
@@ -95,15 +100,18 @@ public class EditTimetable extends Activity
                     error_string += "Make sure end time follows: hh:mm";
                 }
 
+                //if there is no error then timetables is updated
                 if (error_string.length() == 0)
                 {
                     getDb_access().updateUsertimeTable(getFrame().getUserID(), ((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
                     getFrame().getPanel().removeAll();
                     getFrame().pack();
+                    //user if returned to home activity
                     getFrame().startActivity(new HomeActivity(getFrame()));
                 }
                 else
                 {
+                    //display errors, if present
                     error_output.setText(error_string);
                 }
             }

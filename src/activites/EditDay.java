@@ -27,13 +27,15 @@ public class EditDay extends Activity
 
     private int day;
 
+    //array for each of the days of the week
     private String[] days_of_week = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     private ArrayList<TimetableEntry> entries;
 
+    //Page is used from creating a new event of a specific day or view and editing/removing existing events for a day
     public EditDay(GUIFrame input_frame, Object[] args, boolean draw_gui)
     {
-        super(input_frame, args, draw_gui);
+        super(input_frame, draw_gui);
         entries = getDb_access().getTimetableEntriesForDay(getFrame().getUserID(), (Integer) args[0]);
 
         edit_buttons = new Button[entries.size()];
@@ -42,14 +44,15 @@ public class EditDay extends Activity
         day = (int) args[0];
 
         error_output = new JTextPane();
-        //getPanel().setLayout(new GridLayout(2, 4, 5, 10));
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
         GridBagConstraints jConstraints = new GridBagConstraints();
 
+        //users subjects is grabbed from database and then added to list
         ArrayList<SubjectEntry> subjectEntries = getDb_access().getUserSubjects(getFrame().getUserID());
         String[] subjects = new String[subjectEntries.size()];
 
@@ -71,6 +74,7 @@ public class EditDay extends Activity
 
         jConstraints.gridy++;
 
+        //dropdown is created of all a user's subjects
         subjectList = new JComboBox(subjects);
         getPanel().add(subjectList, jConstraints);
 
@@ -104,6 +108,8 @@ public class EditDay extends Activity
         kConstraints.gridy = 1;
         kConstraints.gridx = 5;
 
+        //if there and time table entries present on the selected day, data for the entry
+        //and button for removing and editing are displayed on the screen
         if (entries.size() > 0)
         {
             label = new JLabel("Edit Day: ");
@@ -140,6 +146,7 @@ public class EditDay extends Activity
             {
                 String error_string = "";
 
+                //ensures that the start/end times for event follow regex formatting
                 if (!((TextField) start_time).getText().matches("\\d{1,}\\:\\d{2}"))
                 {
                     error_string += "Make sure start time follows: hh:mm" + '\n';
@@ -150,12 +157,12 @@ public class EditDay extends Activity
                     error_string += "Make sure end time follows: hh:mm" + '\n';
                 }
 
+                //if there are no errors, user is sent to home activity and database entry is added
                 if (error_string.length() == 0)
                 {
                     if ((getDb_access().entryInTimeFrame(getFrame().getUserID(), start_time.getText(), end_time.getText(), day)) == 0)
                     {
                         getDb_access().addTimetableEntry(getFrame().getUserID(), (String) subjectList.getSelectedItem(), start_time.getText(), end_time.getText(), day);
-                        //getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
                         getFrame().getPanel().removeAll();
                         getFrame().pack();
 
@@ -167,11 +174,12 @@ public class EditDay extends Activity
                     }
                 }
 
+                //if there are errors they are displayed on the screen
                 error_output.setText(error_string);
-
             }
         });
 
+        //Returns the user to the home page
         Return.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -182,6 +190,7 @@ public class EditDay extends Activity
         });
 
 
+        //loops through the array of buttons and sets listeners for each one
         for (int i = 0; i < entries.size(); i++)
         {
             final int index = i;
@@ -190,10 +199,13 @@ public class EditDay extends Activity
                 public void actionPerformed(ActionEvent e) {
                     getFrame().getPanel().removeAll();
                     getFrame().pack();
+                    //starts new activity, for edit time table entry, on day i
+                    //array of edit button's positions correspond to an timetable entry element in entries arraylist and position i
                     getFrame().startActivity(new EditTimetableEntry(getFrame(), new Object[]{entries.get(index).getStart_time(), entries.get(index).getEnd_time(), entries.get(index).getDay()}, false));
                 }
             });
 
+            //removes the timetable event at possible i
             remove_buttons[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

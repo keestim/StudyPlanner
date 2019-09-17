@@ -19,26 +19,19 @@ public class ChangeSubjects extends Activity
 
     private ArrayList<SubjectEntry> entries;
 
+    //Displays Screen to change user subjects
     public ChangeSubjects(GUIFrame input_frame)
     {
         super(input_frame);
+        //get an array of user subjects from database
         entries = getDb_access().getUserSubjects(getFrame().getUserID());
 
+        //specifies array size by number of subject entries returned from Database
         edit_subjects = new Button[entries.size()];
         remove_subjects = new Button[entries.size()];
     }
 
-    public void paint( Graphics g )
-    {
-        update( g ); // repaint canvas
-    }
-
-    // repaint the canvas
-    public void update( Graphics g )
-    {
-
-    }
-
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -47,6 +40,7 @@ public class ChangeSubjects extends Activity
         jConstraints.gridwidth = 2;
         jConstraints.gridy = 1;
 
+        //loops through all of the object in entries list, outputted appropiate data to page
         for (int i = 0; i < entries.size(); i++)
         {
             jConstraints.gridy++;
@@ -56,6 +50,7 @@ public class ChangeSubjects extends Activity
             Button edit = new Button("Edit");
             Button remove = new Button("Remove");
 
+            //assign the various subject inputs
             edit_subjects[i] = edit;
             remove_subjects[i] = remove;
 
@@ -72,6 +67,7 @@ public class ChangeSubjects extends Activity
         getPanel().add(Return, jConstraints);
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs()
     {
@@ -93,8 +89,10 @@ public class ChangeSubjects extends Activity
             }
         });
 
+        //loops through the array of buttons and sets listeners for each one
         for (int i = 0; i < entries.size(); i++)
         {
+            //listeners have access to their array position
             final int index = i;
 
             edit_subjects[i].addActionListener(new ActionListener() {
@@ -103,6 +101,7 @@ public class ChangeSubjects extends Activity
                 {
                     getFrame().getPanel().removeAll();
                     getFrame().pack();
+                    //the button's position in the array, matches the position of the associated Subject Object in the entries list
                     getFrame().startActivity(new EditSubject(getFrame(), new Object[]{entries.get(index).getSubjectID()}));
                 }
             });
@@ -110,6 +109,7 @@ public class ChangeSubjects extends Activity
             remove_subjects[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    //the button's position in the array, matches the position of the associated Subject Object in the entries list
                     getDb_access().removeSubject(entries.get(index).getSubjectID());
                     getFrame().getPanel().removeAll();
                     getFrame().pack();

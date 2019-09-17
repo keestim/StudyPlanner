@@ -1,5 +1,6 @@
 package data;
 
+//class is used for database results that come from the timetablesettings table
 public class TimetableSettings
 {
     private String start_time;

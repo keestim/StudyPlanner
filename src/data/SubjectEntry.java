@@ -1,5 +1,6 @@
 package data;
 
+//class is used for database results that come from the usersubjects table
 public class SubjectEntry
 {
     private int SubjectID;

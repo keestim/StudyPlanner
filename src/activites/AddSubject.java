@@ -15,12 +15,14 @@ public class AddSubject extends Activity
 
     private JTextPane error_output;
 
+    //Displays page for users add a subject
     public AddSubject(GUIFrame input_frame)
     {
         super(input_frame);
         error_output = new JTextPane();
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -32,6 +34,7 @@ public class AddSubject extends Activity
         String[] input_fields = new String[]{"Name"};
         text_input = new Object[input_fields.length];
 
+        //loops through array of field names, displaying form element for the field
         for (int i = 0; i < input_fields.length; i++)
         {
             jConstraints.gridy++;
@@ -57,6 +60,7 @@ public class AddSubject extends Activity
         getPanel().add(error_output, jConstraints);
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs()
     {
@@ -70,6 +74,7 @@ public class AddSubject extends Activity
                     error_string = "Ensure subject name is entered";
                 }
 
+                //if there are no errors subject is added to database
                 if (error_string.length() == 0)
                 {
                     getDb_access().addUserSubject(getFrame().getUserID(), ((TextField) text_input[0]).getText());
@@ -79,11 +84,13 @@ public class AddSubject extends Activity
                 }
                 else
                 {
+                    //errors are displayed if they exist
                     error_output.setText(error_string);
                 }
             }
         });
 
+        //Returns user to home activity
         Return.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

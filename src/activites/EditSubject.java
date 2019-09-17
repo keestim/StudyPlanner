@@ -18,6 +18,7 @@ public class EditSubject extends Activity
 
     private JTextPane error_output;
 
+    //Displays the edit page for a selected user subject
     public EditSubject(GUIFrame input_frame, Object[] args)
     {
         super(input_frame);
@@ -26,6 +27,7 @@ public class EditSubject extends Activity
         error_output = new JTextPane();
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -59,9 +61,9 @@ public class EditSubject extends Activity
         jConstraints.gridy++;
         jConstraints.gridx++;
         getPanel().add(error_output, jConstraints);
-
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs()
     {
@@ -75,6 +77,7 @@ public class EditSubject extends Activity
                     error_string = "Ensure subject name is entered";
                 }
 
+                //if there are no errors, the edited subject is updated in the database
                 if (error_string.length() == 0)
                 {
                     getDb_access().updateUserSubject(entry.getSubjectID(), ((TextField) text_input[0]).getText());
@@ -84,11 +87,13 @@ public class EditSubject extends Activity
                 }
                 else
                 {
+                    //errors are displayed if they exist
                     error_output.setText(error_string);
                 }
             }
         });
 
+        //Returns the user to ChangeSubjects activity
         Return.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -14,11 +14,15 @@ public class DBActions
 {
     private static Connection fDBConnection;
 
+    //Class is for database interactions
     public DBActions()
     {
         try
         {
+            //loads in the required drive for database connection
             Class.forName("com.mysql.jdbc.Driver");
+
+            //gets the connection value for the system database
             fDBConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/studyplanner", "root", "");
         }
         catch (Exception e)
@@ -27,6 +31,7 @@ public class DBActions
         }
     }
 
+    //checks the database tables exist, if not the database tables are created
     public void DBExists()
     {
         try
@@ -47,6 +52,7 @@ public class DBActions
         }
     }
 
+    //check if user with input username and password exist
     public boolean AuthenticateUser(String username, String password)
     {
         try
@@ -58,9 +64,11 @@ public class DBActions
 
             if (result.getRow() > 0)
             {
+                //if there is a match (i.e there is atleast one row returned, then true is returned)
                 return true;
             }
 
+            //if there isn't a match (i.e. there isn't any row return, then return false)
             return false;
         }
         catch (SQLException ex)
@@ -70,6 +78,7 @@ public class DBActions
         }
     }
 
+    //user for check if there is a user that exists the input username
     public int GetUserIDByUsername(String username)
     {
         try
@@ -94,6 +103,7 @@ public class DBActions
         return -1;
     }
 
+    //gets all of the timetable entries for a given input User ID
     public ArrayList<TimetableEntry> getTimetableEntries(int UserID)
     {
         ArrayList<TimetableEntry> return_entries = new ArrayList<>();
@@ -116,6 +126,8 @@ public class DBActions
         return return_entries;
     }
 
+    //gets all of the timetable entries for a given input User ID on a specific day
+    //day ranges from (1-7) with 1 being monday and 7 being sunday
     public ArrayList<TimetableEntry> getTimetableEntriesForDay(int UserID, int Day)
     {
         ArrayList<TimetableEntry> return_entries = new ArrayList<>();
@@ -138,6 +150,7 @@ public class DBActions
         return return_entries;
     }
 
+    //creates user account for the solution, from a given input username and password
     public boolean createUser(String username, String password)
     {
         try
@@ -150,6 +163,7 @@ public class DBActions
                 resultSet.next();
                 int userID = resultSet.getInt(1);
 
+                //users are required to have a associated entry in timetablesettings, so UserID is gathered and then entry is added to table
                 result = stmt.executeUpdate("INSERT INTO timetablesettings VALUES ('" + userID + "', '00:00', '24:00')");
                 if (result >= 0)
                 {
@@ -167,6 +181,7 @@ public class DBActions
         return false;
     }
 
+    //gets all of the subject of a user for a given input UserID
     public ArrayList<SubjectEntry> getUserSubjects(int UserID)
     {
         ArrayList<SubjectEntry> return_entries = new ArrayList<>();
@@ -190,6 +205,7 @@ public class DBActions
         return return_entries;
     }
 
+    //adds a subject associated with a specific user
     public boolean addUserSubject(int UserID, String SubjectName)
     {
         try
@@ -211,6 +227,7 @@ public class DBActions
         return false;
     }
 
+    //returns a given users timetable settings as a TimetableSettings object
     public TimetableSettings getTimetableSettings(int UserID)
     {
         try
@@ -229,6 +246,7 @@ public class DBActions
         return null;
     }
 
+    //retuns a SubejctEntry object from a input SubjectID
     public SubjectEntry getSubject(int SubjectID)
     {
         try
@@ -247,6 +265,7 @@ public class DBActions
         return null;
     }
 
+    //Removes a subject using provided SubjectID
     public boolean removeSubject(int SubjectID)
     {
         try
@@ -272,6 +291,7 @@ public class DBActions
         return false;
     }
 
+    //Adds a timetable entry
     public boolean addTimetableEntry(int UserID, String SubjectName, String StartTime, String EndTime, int day)
     {
         try
@@ -294,6 +314,7 @@ public class DBActions
         return false;
     }
 
+    //removes a timetable entry
     public boolean removeTimetableEntry(String StartTime, String EndTime, int Day, int UserID)
     {
         try
@@ -315,12 +336,12 @@ public class DBActions
         return false;
     }
 
+    //updates user subject with new name
     public boolean updateUserSubject(int SubjectID, String SubjectName)
     {
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            int subject_ID = Integer.valueOf(SubjectName.split(" | ")[0]);
             int result = stmt.executeUpdate("UPDATE usersubjects SET SubjectName = '" + SubjectName + "'  WHERE SubjectID = " + SubjectID);
 
             if (result >= 0)
@@ -337,12 +358,13 @@ public class DBActions
         return false;
     }
 
-    public int entryInTimeFrame(int UserID, String start_date, String end_date, int day)
+    //checks if there are any timetable entries within existing timeframe to prevent any overlap when adding new entry
+    public int entryInTimeFrame(int UserID, String start_time, String end_time, int day)
     {
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND StartTime >= '" + start_date + "' AND EndTime <= '" + end_date +"' AND Day = " + day);
+            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND StartTime >= '" + start_time + "' AND EndTime <= '" + end_time +"' AND Day = " + day);
             result.next();
             result.last();
             return result.getRow();
@@ -356,6 +378,7 @@ public class DBActions
         return -1;
     }
 
+    //update usertime table with new start and end date
     public boolean updateUsertimeTable(int UserID, String starttime, String endtime)
     {
         try
@@ -377,7 +400,7 @@ public class DBActions
         return false;
     }
 
-
+    //return time table entry within specific timeframe and day
     public TimetableEntry getTimetableEntry(int UserID, String start_time, String end_time, int day)
     {
         try {
@@ -395,6 +418,7 @@ public class DBActions
         return null;
     }
 
+    //updates a timetable entry, wth provided input
     public boolean updateTimetableEntry(int UserID, String SubjectName, String previousStartTime, String previousEndTime, String StartTime, String EndTime, int day)
     {
         try

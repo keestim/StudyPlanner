@@ -1,5 +1,6 @@
 package data;
 
+//class is used for database results that come from the usertimetables table
 public class TimetableEntry
 {
     private String subject_name;

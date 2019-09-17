@@ -14,13 +14,17 @@ public class SignUpActivity extends Activity {
 
     private JTextPane error_output;
 
+    //Displays user sign in page
     public SignUpActivity(GUIFrame input_frame)
     {
+        //tell frame not to draw Graphics section
         super(input_frame, false);
+        //creates a grid layout where form components are drawn
         getPanel().setLayout(new GridLayout(5, 2, 5, 10));
         error_output = new JTextPane();
     }
 
+    //checks form then the class Submit or Return buttons are clicked by user
     @Override
     public void checkInputs()
     {
@@ -31,6 +35,7 @@ public class SignUpActivity extends Activity {
             {
                 String error_string = "";
 
+                //Validates fields, to ensure they are filled out as required
                 if (((TextField) text_input[1]).getText().length() == 0)
                 {
                     error_string += "Password must have a length greater than 0" +'\n';
@@ -46,6 +51,7 @@ public class SignUpActivity extends Activity {
                     error_string += "Password must match" +'\n';
                 }
 
+                //if there are no errors, the sign up process is finalized
                 if (error_string.length() == 0)
                 {
                     getDb_access().createUser(((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
@@ -55,11 +61,13 @@ public class SignUpActivity extends Activity {
                 }
                 else
                 {
+                    //display errors if they exist
                     error_output.setText(error_string);
                 }
             }
         });
 
+        //returns to Sign In activity
         Return.addActionListener(new ActionListener()
         {
             @Override
@@ -72,6 +80,7 @@ public class SignUpActivity extends Activity {
         });
     }
 
+    //displays all of the form components for the activity
     @Override
     public void displayForm()
     {
@@ -83,20 +92,21 @@ public class SignUpActivity extends Activity {
         String[] input_fields = new String[]{"Username", "Password", "Confirm Password"};
         text_input = new Object[input_fields.length];
 
+        //loops through array of field names to create all required elements
         for (int i = 0; i < input_fields.length; i++)
         {
             JLabel label = new JLabel(input_fields[i] + ": ");
             TextField text = new TextField(15);
             text_input[i] = text;
 
-            jConstraints.gridy = i;
+            //increments grid y value, to push new elements down to next vertical position
+            jConstraints.gridy++;
             getPanel().setSize(300, 300);;
             getPanel().add(label, jConstraints);
             getPanel().add(text, jConstraints);
         }
 
-        // Set th
-        // e window to be visible as the default to be false
+        // Set the window to be visible as the default to be false
         jConstraints.weightx = 2;
         jConstraints.gridy = input_fields.length;
         Submit = new Button("Submit");

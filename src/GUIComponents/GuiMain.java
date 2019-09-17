@@ -27,26 +27,10 @@ public class GuiMain
         {
             public void run()
             {
+                //create GUI frame in which elements are rendered to
                 GUIFrame frame = new GUIFrame("Program", db_actions);
                 frame.setVisible(true);
             }
         });
-
-        /*
-        // Create and set up a frame window
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        frame = new JFrame("Layout");
-        frame.setPreferredSize(new Dimension(1280, 720));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Define the panel to hold the components
-        panel = new JPanel();
-        frame.add(panel);
-        frame.pack();
-        frame.setVisible(true);
-
-        HomeActivity sign_in = new HomeActivity(new GuiMain(frame, panel, db_actions));
-        sign_in.displayScreen(new GuiMain(frame, panel, db_actions));
-         */
     }
 }
