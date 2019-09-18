@@ -79,7 +79,7 @@ public class DBActions
     }
 
     //user for check if there is a user that exists the input username
-    public int GetUserIDByUsername(String username)
+    public int getUserIDByUsername(String username)
     {
         try
         {

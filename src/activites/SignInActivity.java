@@ -55,7 +55,7 @@ public class SignInActivity extends Activity
                     //if username and password match Database entry they user is logged in
                     if (getDb_access().AuthenticateUser(user_name, password))
                     {
-                        getFrame().setUserID(getDb_access().GetUserIDByUsername(user_name));
+                        getFrame().setUserID(getDb_access().getUserIDByUsername(user_name));
                         getFrame().getPanel().removeAll();
                         getFrame().pack();
                         getFrame().startActivity(new HomeActivity(getFrame()));

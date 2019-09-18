@@ -54,16 +54,21 @@ public class SignUpActivity extends Activity {
                 //if there are no errors, the sign up process is finalized
                 if (error_string.length() == 0)
                 {
-                    getDb_access().createUser(((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
-                    getFrame().getPanel().removeAll();
-                    getFrame().pack();
-                    getFrame().startActivity(new SignInActivity(getFrame()));
+                    if (getDb_access().getUserIDByUsername(((TextField) text_input[0]).getText()) <= 0)
+                    {
+                        getDb_access().createUser(((TextField) text_input[0]).getText(), ((TextField) text_input[1]).getText());
+                        getFrame().getPanel().removeAll();
+                        getFrame().pack();
+                        getFrame().startActivity(new SignInActivity(getFrame()));
+                    }
+                    else
+                    {
+                        error_string += "User with input username already exists" + '\n';
+                    }
                 }
-                else
-                {
-                    //display errors if they exist
-                    error_output.setText(error_string);
-                }
+
+                error_output.setText(error_string);
+
             }
         });
 
