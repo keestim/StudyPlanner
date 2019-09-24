@@ -364,7 +364,8 @@ public class DBActions
         try
         {
             Statement stmt = fDBConnection.createStatement();
-            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND StartTime >= '" + start_time + "' AND EndTime <= '" + end_time +"' AND Day = " + day);
+            ResultSet result = stmt.executeQuery("SELECT * FROM usertimetables WHERE UserID = " + UserID + " AND (StartTime >= '" + start_time + "' OR EndTime <= '" + end_time +
+                    "') AND StartTime <= '" + end_time + "' AND EndTime >= '" + start_time + "' AND Day = " + day);
             result.next();
             result.last();
             return result.getRow();
